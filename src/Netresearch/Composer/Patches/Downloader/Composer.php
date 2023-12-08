@@ -13,17 +13,17 @@ namespace Netresearch\Composer\Patches\Downloader;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-use Composer\Util\RemoteFilesystem;
+use Composer\Util\HttpDownloader;
 
 /**
- * Downloader, which uses the composer RemoteFilesystem
+ * Downloader, which uses the composer HttpDownloader
  */
 class Composer implements DownloaderInterface
 {
     /**
-     * @var RemoteFilesystem
+     * @var HttpDownloader
      */
-    protected $remoteFileSystem;
+    protected $httpDownloader;
 
     /**
      * Construct the RFS
@@ -32,7 +32,7 @@ class Composer implements DownloaderInterface
      */
     public function __construct(\Composer\IO\IOInterface $io, \Composer\Config $config)
     {
-        $this->remoteFileSystem = new RemoteFilesystem($io, $config);
+        $this->httpDownloader = new HttpDownloader($io, $config);
     }
 
     /**
@@ -60,7 +60,7 @@ class Composer implements DownloaderInterface
             return file_get_contents($url);
         }
 
-        return $this->remoteFileSystem->getContents($originUrl, $url, false);
+        return $this->httpDownloader->getContents($originUrl, $url, false);
     }
 
     /**
@@ -71,7 +71,7 @@ class Composer implements DownloaderInterface
      */
     public function getJson($url)
     {
-        $json = new \Composer\Json\JsonFile($url, $this->remoteFileSystem);
+        $json = new \Composer\Json\JsonFile($url, $this->httpDownloader);
         return $json->read();
     }
 }
